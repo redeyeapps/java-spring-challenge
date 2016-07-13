@@ -46,6 +46,7 @@ public class AuthenticatorService {
      * @param username The user's desired username.
      * @param password The user's desired password.
      * @return The user's authentication token.
+     * @throws AuthenticationException When the specified username is taken.
      */
     @Transactional
     public String register(String username, String password) throws AuthenticationException {
@@ -55,7 +56,7 @@ public class AuthenticatorService {
         }
 
         String salt = randomString(SALT_LENGTH);
-        String saltedPassword = new String(hashEncoder.digest((salt + password).getBytes()));
+        String saltedPassword = generateSaltedPassword(salt, password);
         String token = randomString(TOKEN_LENGTH);
 
         User newUser = new User();
@@ -69,6 +70,42 @@ public class AuthenticatorService {
     }
 
     /**
+     * Authenticates a user and returns a token.
+     *
+     * @param username The user's username.
+     * @param password The user's password.
+     * @return The user's authentication token.
+     * @throws AuthenticationException When either credential is invalid.
+     */
+    public String login(String username, String password) throws AuthenticationException {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new AuthenticationException("Authentication error");
+        }
+
+        String saltedPassword = generateSaltedPassword(user.getSalt(), password);
+        if (!saltedPassword.equals(user.getPassword())) {
+            throw new AuthenticationException("Authentication error");
+        }
+
+        String token = randomString(TOKEN_LENGTH);
+        user.setToken(token);
+        userRepository.save(user);
+        return token;
+    }
+
+    /**
+     * Generates the salted password hash.
+     *
+     * @param salt The salt to use on the password.
+     * @param password The user's password.
+     * @return The salted password hash.
+     */
+    private String generateSaltedPassword(String salt, String password) {
+        return new String(hashEncoder.digest((salt + password).getBytes()));
+    }
+
+    /**
      * Generates a random string of alphanumberic characters
      *
      * @return The generated string.
@@ -76,7 +113,7 @@ public class AuthenticatorService {
     private String randomString(int length) {
         StringBuilder salt = new StringBuilder(length);
         for (int i = 0; i < length; ++i) {
-            int current = random.nextInt(10 + 26 + 26); //Numbers, lowercase and uppercase letters
+            int current = random.nextInt(UNIQUE_CHARACTERS);
             if (current < NUMERAL_CUTOFF) {
                 salt.append((char) ('0' + current));
             } else if (current < LOWERCASE_CUTOFF) {
