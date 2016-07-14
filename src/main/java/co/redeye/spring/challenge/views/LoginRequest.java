@@ -1,5 +1,7 @@
 package co.redeye.spring.challenge.views;
 
+import co.redeye.spring.challenge.Utils;
+import co.redeye.spring.challenge.exceptions.AuthenticationException;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -23,5 +25,14 @@ public class LoginRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void validate() throws AuthenticationException {
+        if (!Utils.stringPresent(username)) {
+            throw new AuthenticationException("Invalid username.");
+        }
+        if (!Utils.stringPresent(password)) {
+            throw new AuthenticationException("Invalid password.");
+        }
     }
 }

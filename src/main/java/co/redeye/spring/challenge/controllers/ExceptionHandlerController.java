@@ -1,6 +1,7 @@
 package co.redeye.spring.challenge.controllers;
 
-import co.redeye.spring.challenge.services.AuthenticationException;
+import co.redeye.spring.challenge.exceptions.AuthenticationException;
+import co.redeye.spring.challenge.exceptions.UserException;
 import co.redeye.spring.challenge.views.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -13,10 +14,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  */
 @ControllerAdvice
 public class ExceptionHandlerController {
-    @ExceptionHandler (value = AuthenticationException.class)
+    @ExceptionHandler (value = UserException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public ErrorResponse authenticationException(AuthenticationException e) {
+    public ErrorResponse authenticationException(UserException e) {
         return new ErrorResponse(e.getMessage());
     }
 
