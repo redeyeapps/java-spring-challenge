@@ -23,6 +23,18 @@ public class TodoListController {
     private TodoListService todoListService;
 
     /**
+     * Retrieves the user's entire to do list
+     *
+     * @param authToken The user's authentication token
+     * @throws AuthenticationException If the authentication token is missing or invalid.
+     */
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @ResponseBody
+    List<TodoItem> newTask(@RequestHeader("Authorization") String authToken) throws UserException {
+        return todoListService.getItems(authToken);
+    }
+
+    /**
      * Adds a new item to the authenticated user's to do list.
      *
      * @param newItem The item being added.
@@ -37,14 +49,12 @@ public class TodoListController {
     }
 
     /**
-     * Retrieves the user's entire to do list
-     *
-     * @param authToken The user's authentication token
-     * @throws AuthenticationException If the authentication token is missing or invalid.
+     * Modifies an existing task.
      */
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    @ResponseBody
-    List<TodoItem> newTask(@RequestHeader("Authorization") String authToken) throws UserException {
-        return todoListService.getItems(authToken);
+    @RequestMapping(value = "/{id}", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.OK)
+    void editTask(@RequestBody TodoItem item, @RequestHeader("Authorization") String authToken, @PathVariable("id") long taskId) throws UserException {
+        item.validate();
+        todoListService.editItem(authToken, taskId, item.getText(), item.isDone());
     }
 }

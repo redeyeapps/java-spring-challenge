@@ -1,6 +1,7 @@
 package co.redeye.spring.challenge.controllers;
 
 import co.redeye.spring.challenge.exceptions.AuthenticationException;
+import co.redeye.spring.challenge.exceptions.IllegalItemException;
 import co.redeye.spring.challenge.exceptions.UserException;
 import co.redeye.spring.challenge.views.ErrorResponse;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  */
 @ControllerAdvice
 public class ExceptionHandlerController {
+    @ExceptionHandler (value = IllegalItemException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseBody
+    public ErrorResponse illegalAccessException(IllegalItemException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
     @ExceptionHandler (value = UserException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
