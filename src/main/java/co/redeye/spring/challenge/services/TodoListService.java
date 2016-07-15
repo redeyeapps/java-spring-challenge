@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 public class TodoListService {
     @Autowired
     private AuthenticatorService authenticatorService;
-
     @Autowired
     private ItemRepository itemRepository;
 
