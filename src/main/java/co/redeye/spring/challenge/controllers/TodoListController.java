@@ -28,7 +28,7 @@ public class TodoListController {
      */
     @RequestMapping(value = "/", method = RequestMethod.GET)
     @ResponseBody
-    public List<TodoItem> newTask(@RequestHeader("Authorization") String authToken) throws UserException {
+    public List<TodoItem> getTasks(@RequestHeader("Authorization") String authToken) throws UserException {
         return todoListService.getItems(authToken);
     }
 
@@ -44,6 +44,32 @@ public class TodoListController {
     public void newTask(@RequestBody TodoItem newItem, @RequestHeader("Authorization") String authToken) throws UserException {
         newItem.validate();
         todoListService.addItem(authToken, newItem.getText(), newItem.isDone());
+    }
+
+    /**
+     * Gets the user's incomplete items.
+     *
+     * @param authToken The user's authentication token.
+     * @return All of the user's items which are not done.
+     * @throws AuthenticationException If the user's token is invalid.
+     */
+    @RequestMapping(value = "/active", method = RequestMethod.GET)
+    @ResponseBody
+    public List<TodoItem> getActiveItems(@RequestHeader("Authorization") String authToken) throws AuthenticationException {
+        return todoListService.getIncompleteItems(authToken);
+    }
+
+    /**
+     * Gets the user's complete items.
+     *
+     * @param authToken The user's authentication token.
+     * @return All of the user's items which are done.
+     * @throws AuthenticationException If the user's token is invalid.
+     */
+    @RequestMapping(value = "/inactive", method = RequestMethod.GET)
+    @ResponseBody
+    public List<TodoItem> getInactiveItems(@RequestHeader("Authorization") String authToken) throws AuthenticationException {
+        return todoListService.getCompleteItems(authToken);
     }
 
     /**

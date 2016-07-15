@@ -95,7 +95,7 @@ public class TodoListService {
      *
      * @param token  The user's authentication token.
      * @param taskId The id of the task to be removed.
-     * @throws UserException If there is an authentication issue or the
+     * @throws UserException If there is an issue with authentication or the item.
      */
     @Transactional
     public void deleteItem(String token, long taskId) throws UserException {
@@ -111,5 +111,45 @@ public class TodoListService {
         }
 
         itemRepository.delete(item);
+    }
+
+    /**
+     * Gets all of the user's incomplete to do list items.
+     *
+     * @param token The user's authentication token.
+     * @throws AuthenticationException If the user's token is invalid.
+     * @return The user's incomplete items.
+     */
+    public List<TodoItem> getIncompleteItems(String token) throws AuthenticationException{
+        return getItemsWithDoneStatus(token, false);
+    }
+
+    /**
+     * Gets all of the user's complete to do list items.
+     *
+     * @param token The user's authentication token.
+     * @throws AuthenticationException If the user's token is invalid.
+     * @return The user's complete items.
+     */
+    public List<TodoItem> getCompleteItems(String token) throws AuthenticationException {
+        return getItemsWithDoneStatus(token, true);
+    }
+
+    /**
+     * Method for handling requests for a user's complete/incomplete items.
+     *
+     * @param token The user's authentication token.
+     * @param doneStatus The desired status of the TodoItems to return.
+     * @throws AuthenticationException If the user's token is invalid.
+     * @return The user's items with the desired status.
+     */
+    @Transactional
+    private List<TodoItem> getItemsWithDoneStatus(String token, boolean doneStatus) throws AuthenticationException {
+        User user = authenticatorService.fromToken(token);
+
+        return itemRepository.findByUserAndDone(user, doneStatus).stream()
+                .filter(item -> item.isDone() == doneStatus)
+                .map(TodoItem::new)
+                .collect(Collectors.toList());
     }
 }
