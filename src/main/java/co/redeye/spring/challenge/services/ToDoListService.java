@@ -5,6 +5,7 @@ import co.redeye.spring.challenge.db.ItemRepository;
 import co.redeye.spring.challenge.db.User;
 import co.redeye.spring.challenge.exceptions.AuthenticationException;
 import co.redeye.spring.challenge.exceptions.IllegalItemException;
+import co.redeye.spring.challenge.exceptions.InvalidItemException;
 import co.redeye.spring.challenge.exceptions.UserException;
 import co.redeye.spring.challenge.views.TodoItem;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,9 +72,14 @@ public class TodoListService {
      * @throws AuthenticationException If the user's token is invalid.
      * @throws IllegalItemException    If the specified task does not belong to the user.
      */
+    @Transactional
     public void editItem(String token, long taskId, String text, boolean done) throws UserException {
         User user = authenticatorService.fromToken(token);
         Item item = itemRepository.findOne(taskId);
+
+        if (item == null) {
+            throw new InvalidItemException("The specified to do list item does not exist.");
+        }
 
         if (!user.equals(item.getUser())) {
             throw new IllegalItemException("This item does not belong to you.");
@@ -82,5 +88,28 @@ public class TodoListService {
         item.setDone(done);
         item.setDescription(text);
         itemRepository.save(item);
+    }
+
+    /**
+     * Deletes a specified item from the current user's to do list.
+     *
+     * @param token  The user's authentication token.
+     * @param taskId The id of the task to be removed.
+     * @throws UserException If there is an authentication issue or the
+     */
+    @Transactional
+    public void deleteItem(String token, long taskId) throws UserException {
+        User user = authenticatorService.fromToken(token);
+        Item item = itemRepository.findOne(taskId);
+
+        if (item == null) {
+            throw new InvalidItemException("The specified to do list item does not exist.");
+        }
+
+        if (!user.equals(item.getUser())) {
+            throw new IllegalItemException("This item does not belong to you.");
+        }
+
+        itemRepository.delete(item);
     }
 }
