@@ -99,4 +99,16 @@ public class TodoListController {
     public void deleteTask(@RequestHeader("Authorization") String authToken, @PathVariable("id") long taskId) throws UserException {
         todoListService.deleteItem(authToken, taskId);
     }
+
+    /**
+     * Completely removes all items user's to do list.
+     *
+     * @param authToken The user's authentication token.
+     * @throws AuthenticationException If there is an authentication issue.
+     */
+    @RequestMapping(value = "/clear", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteAllTasks(@RequestHeader("Authorization") String authToken) throws AuthenticationException {
+        todoListService.deleteAllItems(authToken);
+    }
 }

@@ -21,11 +21,13 @@
 		"79e0105c-47a1-44fd-2e3c-cc4fea2966da",
 		"4d9857fa-6a04-2897-eab9-42e14baa2387",
 		"c63e1e0e-b9d3-10ea-aca7-3bed45a16e9c",
-		"35407456-75f7-6572-475d-8bbe8f95742d"
+		"35407456-75f7-6572-475d-8bbe8f95742d",
+		"1b61851b-eab8-084e-38bc-f83f5d7a1a65",
+		"a2d53da8-d963-74ee-85fd-b1527731daee"
 	],
 	"folders": [],
 	"timestamp": 1468385917501,
-	"owner": "",
+	"owner": 0,
 	"remoteLink": "",
 	"public": false,
 	"published": false,
@@ -49,6 +51,25 @@
 			"collectionId": "bb4070c0-5f32-bc49-8839-86571f6424b4",
 			"responses": [],
 			"rawModeData": "{\n\"username\": \"Bill\",\n\"password\": \"password\"\n}"
+		},
+		{
+			"id": "1b61851b-eab8-084e-38bc-f83f5d7a1a65",
+			"headers": "Authorization: Bearer {{authTokenRegister}}\nContent-Type: application/json\n",
+			"url": "localhost:8080/todo/clear",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "DELETE",
+			"data": [],
+			"dataMode": "raw",
+			"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1468556010590,
+			"name": "Clear entire list",
+			"description": "",
+			"collectionId": "bb4070c0-5f32-bc49-8839-86571f6424b4",
+			"responses": [],
+			"rawModeData": ""
 		},
 		{
 			"id": "28c8fdfc-2cef-b371-f52b-f23365432f02",
@@ -306,6 +327,26 @@
 			"collectionId": "bb4070c0-5f32-bc49-8839-86571f6424b4",
 			"responses": [],
 			"rawModeData": "{\n\"username\": \"Steve\",\n\"password\": \"password\"\n}"
+		},
+		{
+			"id": "a2d53da8-d963-74ee-85fd-b1527731daee",
+			"headers": "Content-Type: application/json\nAuthorization: Bearer {{authTokenRegister}}\n",
+			"url": "localhost:8080/todo/",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "GET",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Body is empty array\"] = responseBody === \"[]\";",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1468556063063,
+			"name": "Check todo list is empty",
+			"description": "",
+			"collectionId": "bb4070c0-5f32-bc49-8839-86571f6424b4",
+			"responses": [],
+			"rawModeData": "{\n\"text\": \"Build a teleporter\",\n\"done\": \"false\"\n}"
 		},
 		{
 			"id": "b59e6244-f297-86dc-9e2f-ecfab73abb91",

@@ -117,10 +117,10 @@ public class TodoListService {
      * Gets all of the user's incomplete to do list items.
      *
      * @param token The user's authentication token.
-     * @throws AuthenticationException If the user's token is invalid.
      * @return The user's incomplete items.
+     * @throws AuthenticationException If the user's token is invalid.
      */
-    public List<TodoItem> getIncompleteItems(String token) throws AuthenticationException{
+    public List<TodoItem> getIncompleteItems(String token) throws AuthenticationException {
         return getItemsWithDoneStatus(token, false);
     }
 
@@ -128,8 +128,8 @@ public class TodoListService {
      * Gets all of the user's complete to do list items.
      *
      * @param token The user's authentication token.
-     * @throws AuthenticationException If the user's token is invalid.
      * @return The user's complete items.
+     * @throws AuthenticationException If the user's token is invalid.
      */
     public List<TodoItem> getCompleteItems(String token) throws AuthenticationException {
         return getItemsWithDoneStatus(token, true);
@@ -138,10 +138,10 @@ public class TodoListService {
     /**
      * Method for handling requests for a user's complete/incomplete items.
      *
-     * @param token The user's authentication token.
+     * @param token      The user's authentication token.
      * @param doneStatus The desired status of the TodoItems to return.
-     * @throws AuthenticationException If the user's token is invalid.
      * @return The user's items with the desired status.
+     * @throws AuthenticationException If the user's token is invalid.
      */
     @Transactional
     private List<TodoItem> getItemsWithDoneStatus(String token, boolean doneStatus) throws AuthenticationException {
@@ -151,5 +151,17 @@ public class TodoListService {
                 .filter(item -> item.isDone() == doneStatus)
                 .map(TodoItem::new)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Deletes all of the user's to do list items.
+     *
+     * @param token The user's authentication token.
+     * @throws AuthenticationException If the user's token is invalid.
+     */
+    @Transactional
+    public void deleteAllItems(String token) throws AuthenticationException {
+        User user = authenticatorService.fromToken(token);
+        itemRepository.delete(user.getItems());
     }
 }
